@@ -1,0 +1,36 @@
+name: Build Fabric mod
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.14.3'
+      - name: Unpack project
+        run: unzip -q epic-payment-fabric-1.21.11.zip
+      - name: Build mod
+        working-directory: epic-payment
+        run: gradle build --no-daemon
+      - name: Upload mod JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: epic-payment-fabric-1.21.11
+          path: epic-payment/build/libs/*.jar
+          if-no-files-found: error
