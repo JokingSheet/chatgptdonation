@@ -24,13 +24,19 @@ jobs:
         with:
           gradle-version: '8.14.3'
       - name: Unpack project
+        if: hashFiles('epic-payment-fabric-1.21.11.zip') != ''
         run: unzip -q epic-payment-fabric-1.21.11.zip
       - name: Build mod
+        if: hashFiles('epic-payment-fabric-1.21.11.zip') != ''
         working-directory: epic-payment
         run: gradle build --no-daemon
       - name: Upload mod JAR
+        if: hashFiles('epic-payment-fabric-1.21.11.zip') != ''
         uses: actions/upload-artifact@v4
         with:
           name: epic-payment-fabric-1.21.11
           path: epic-payment/build/libs/*.jar
           if-no-files-found: error
+      - name: Explain missing source archive
+        if: hashFiles('epic-payment-fabric-1.21.11.zip') == ''
+        run: echo 'Upload epic-payment-fabric-1.21.11.zip to the repository root to enable the build.'
